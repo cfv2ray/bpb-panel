@@ -49,7 +49,8 @@ jobs:
 
           # 最新正式版 Latest
           LATEST_TAG=$(echo "$RESPONSE" | jq -r '.[] | select(.prerelease==false) | .tag_name' | head -n 1)
-          LATEST_DOWNLOAD=$(echo "$RESPONSE" | jq -r '.[] | select(.prerelease==false) | .assets[] | select(.name=="worker.js") | .browser_download_url' | head -n 1)
+          #LATEST_DOWNLOAD=$(echo "$RESPONSE" | jq -r '.[] | select(.prerelease==false) | .assets[] | select(.name=="worker.js") | .browser_download_url' | head -n 1)
+          LATEST_DOWNLOAD=$(echo "$RESPONSE" | jq -r ".[] | select(.tag_name==\"$LATEST_TAG\") | .assets[] | select(.name==\"worker.js\") | .browser_download_url")
 
           echo "最新正式版 Latest: $LATEST_TAG"
           echo "最新正式版 LATEST_DOWNLOAD: $LATEST_DOWNLOAD"
@@ -68,10 +69,10 @@ jobs:
 
       - name: 下载 BPB worker.js
         if: env.UPDATE_NEEDED == 'true'  # 如果 UPDATE_NEEDED 环境变量为：true,执行下面的操作。
-        run: |
-          # wget -O origin.js https://github.com/bia-pain-bache/BPB-Worker-Panel/releases/download/v3.5.1/worker.js
-          wget -O origin.js "$LATEST_DOWNLOAD"
-          echo "$PRE_RELEASE_TAG" > version.txt
+        run: |    # wget -O origin.js https://github.com/bia-pain-bache/BPB-Worker-Panel/releases/download/v3.5.1/worker.js
+           echo "最新正式版 LATEST_DOWNLOAD: $LATEST_DOWNLOAD"
+           wget -O origin.js "$LATEST_DOWNLOAD"
+           echo "$PRE_RELEASE_TAG" > version.txt
 
       - name: 混淆 BPB worker.js
         if: env.UPDATE_NEEDED == 'true'  # 如果 UPDATE_NEEDED 环境变量为：true,执行下面的操作。
