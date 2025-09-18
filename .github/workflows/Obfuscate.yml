@@ -67,7 +67,7 @@ jobs:
             echo "已经是最新 Pre-release 版本"  
           else  # 设置 UPDATE_NEEDED=true，输出"发现新 Pre-release 版本 [版本号]"
             echo "UPDATE_NEEDED=true" >> $GITHUB_ENV
-            echo "发现新 Pre-release 版本 $PRE_RELEASE_TAG"
+            echo "发现新 Latest-release 版本 $LATEST_TAG"
           fi
 
       - name: 下载 BPB worker.js
@@ -75,7 +75,7 @@ jobs:
         run: |    # wget -O origin.js https://github.com/bia-pain-bache/BPB-Worker-Panel/releases/download/v3.5.1/worker.js
           # echo "最新正式版 LATEST_DOWNLOAD: $LATEST_DOWNLOAD"
            wget -O origin.js "$LATEST_DOWNLOAD"
-           echo "$PRE_RELEASE_TAG" > version.txt
+           echo "$LATEST_TAG" > version.txt
 
       - name: 混淆 BPB worker.js
         if: env.UPDATE_NEEDED == 'true'  # 如果 UPDATE_NEEDED 环境变量为：true,执行下面的操作。
