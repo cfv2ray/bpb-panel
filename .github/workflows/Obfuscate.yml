@@ -54,12 +54,27 @@ jobs:
           echo "最新正式版 Latest: $LATEST_TAG"
           echo "最新正式版 LATEST_DOWNLOAD: $LATEST_DOWNLOAD"
 
+      
+      - name: 判断是否需要更新 Latest
+        id: check_update
+        run: | # 如果本地版本=最新的LATEST版本，就设置UPDATE_NEEDED环境变量为：false ，通过（通过 $GITHUB_ENV）
+          if [ "$LOCAL_VERSION" = "$LATEST_TAG" ]; then 
+            echo "UPDATE_NEEDED=false" >> $GITHUB_ENV
+            echo "已经是最新 Pre-release 版本"  
+          else  # 设置 UPDATE_NEEDED=true，输出"发现新 Pre-release 版本 [版本号]"
+            echo "UPDATE_NEEDED=true" >> $GITHUB_ENV
+            echo "发现新 Pre-release 版本 $PRE_RELEASE_TAG"
+          fi
 
-      - name: 下载 BPB worker.js  
+      - name: 下载 BPB worker.js
+        if: env.UPDATE_NEEDED == 'true'  # 如果 UPDATE_NEEDED 环境变量为：true,执行下面的操作。
         run: |
-          wget -O origin.js https://github.com/bia-pain-bache/BPB-Worker-Panel/releases/download/v3.5.1/worker.js
+          # wget -O origin.js https://github.com/bia-pain-bache/BPB-Worker-Panel/releases/download/v3.5.1/worker.js
+          wget -O origin.js "$LATEST_DOWNLOAD"
+          echo "$PRE_RELEASE_TAG" > version.txt
 
       - name: 混淆 BPB worker.js
+        if: env.UPDATE_NEEDED == 'true'  # 如果 UPDATE_NEEDED 环境变量为：true,执行下面的操作。
         run: |
           javascript-obfuscator origin.js --output _worker.js \
             --compact true \
@@ -74,9 +89,11 @@ jobs:
             --unicode-escape-sequence true
 
       - name: 提交更改
+        if: env.UPDATE_NEEDED == 'true'  # 如果 UPDATE_NEEDED 环境变量为：true,执行下面的操作。
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: main
-          commit_message: ':arrow_up: 更新最新的 BPB 面板'
+          commit_message: "🔄 自动同步最新 Latest-release Worker：${{ env.PRE_RELEASE_TAG }}"
           commit_author: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
-          push_options: '--set-upstream'
+          # push_options: '--set-upstream'
+          push_options: --force
