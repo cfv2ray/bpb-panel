@@ -70,7 +70,7 @@ jobs:
         if: env.UPDATE_NEEDED == 'true'  # 如果 UPDATE_NEEDED 环境变量为：true,执行下面的操作。
         run: |
           # wget -O origin.js https://github.com/bia-pain-bache/BPB-Worker-Panel/releases/download/v3.5.1/worker.js
-          wget -O origin.js "$LATEST_DOWNLOAD"
+          wget -O worker.zip "$LATEST_DOWNLOAD"
           echo "$PRE_RELEASE_TAG" > version.txt
 
       - name: 混淆 BPB worker.js
