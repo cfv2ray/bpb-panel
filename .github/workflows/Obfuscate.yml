@@ -49,8 +49,7 @@ jobs:
 
           # 最新正式版 Latest
           LATEST_TAG=$(echo "$RESPONSE" | jq -r '.[] | select(.prerelease==false) | .tag_name' | head -n 1)
-          LATEST_DOWNLOAD=$(echo "$RESPONSE" | jq -r '.[] | select(.prerelease==true) | .assets[] | select(.name=="worker.js
-") | .browser_download_url' | head -n 1)
+          PRE_RELEASE_DOWNLOAD=$(echo "$RESPONSE" | jq -r '.[] | select(.prerelease==false) | .assets[] | select(.name=="worker.js") | .browser_download_url' | head -n 1)
 
           echo "最新正式版 Latest: $LATEST_TAG"
           echo "最新正式版 LATEST_DOWNLOAD: $LATEST_DOWNLOAD"
