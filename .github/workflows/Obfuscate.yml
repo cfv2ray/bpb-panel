@@ -28,6 +28,18 @@ jobs:
         run: |
           npm install -g javascript-obfuscator
 
+# 检查当前目录下是否存在 version.txt 文件,如果存在，读取文件内容并赋值给 LOCAL_VERSION 变量
+      - name: 获取当前本地版本
+        id: get_local_version
+        run: |
+          if [ -f version.txt ]; then  
+            LOCAL_VERSION=$(cat version.txt)
+          else # 如果不存在，将 LOCAL_VERSION 设为空字符串
+            LOCAL_VERSION=""
+          fi # 最后将 LOCAL_VERSION 的值写入 GitHub Actions 的环境变量中（通过 $GITHUB_ENV）
+          echo "LOCAL_VERSION=$LOCAL_VERSION" >> $GITHUB_ENV
+          echo "当前本地版本: $LOCAL_VERSION"
+
       - name: 下载 BPB worker.js  
         run: |
           wget -O origin.js https://github.com/bia-pain-bache/BPB-Worker-Panel/releases/download/v3.5.1/worker.js
